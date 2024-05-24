@@ -33,6 +33,8 @@ class _AddExpenseState extends State<AddExpense> {
       }
     }
 
+    double sw = MediaQuery.sizeOf(context).width;
+    double sh = MediaQuery.sizeOf(context).height;
     return Column(
       children: <Widget>[
         Row(
@@ -45,22 +47,21 @@ class _AddExpenseState extends State<AddExpense> {
                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
               ),
               IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.notifications_none))
+                  onPressed: () {}, icon: const Icon(Icons.notifications_none))
             ]),
-        const SizedBox(
-          height: 30,
+        SizedBox(
+          height: sh * 0.05,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              width: 10,
+              width: sw * 0.025,
               height: 30,
               color: const Color(0xff00AEAD),
             ),
-            const SizedBox(
-              width: 10,
+            SizedBox(
+              width: sw * 0.025,
             ),
             const Text(
               'Add Expense',
@@ -68,185 +69,190 @@ class _AddExpenseState extends State<AddExpense> {
             ),
           ],
         ),
-        SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20, top: 20),
-              child: Column(
-                children: <Widget>[
-                  const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Name', style: TextStyle(fontSize: 16))),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Enter name',
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      filled: true,
-                      fillColor: const Color(0xff00AEAD).withOpacity(0.08),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        borderSide: BorderSide.none,
+        Expanded(
+          child: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Padding(
+                padding: EdgeInsets.only(
+                    left: sw * 0.05, right: sw * 0.05, top: sh * 0.03),
+                child: Column(
+                  children: <Widget>[
+                    const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Name', style: TextStyle(fontSize: 16))),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        hintText: 'Enter name',
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        filled: true,
+                        fillColor: const Color(0xff00AEAD).withOpacity(0.08),
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your name';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        name = value;
+                      },
+                    ),
+                    SizedBox(
+                      height: sh * 0.015,
+                    ),
+                    const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Date', style: TextStyle(fontSize: 16))),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        hintText: 'dd-mm-yyyy',
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.calendar_today),
+                          onPressed: () => selectDate(context),
+                        ),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        filled: true,
+                        fillColor: const Color(0xff00AEAD).withOpacity(0.08),
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      readOnly: true,
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+                        if (pickedDate != null) {
+                          setState(() {
+                            date = pickedDate;
+                          });
+                        }
+                      },
+                      validator: (value) {
+                        if (date == null) {
+                          return 'Please select a date';
+                        }
+                        return null;
+                      },
+                      controller: TextEditingController(
+                        text: date != null ? date.toString().split(' ')[0] : '',
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      name = value;
-                    },
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Date', style: TextStyle(fontSize: 16))),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'dd-mm-yyyy',
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: () => selectDate(context),
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      filled: true,
-                      fillColor: const Color(0xff00AEAD).withOpacity(0.08),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        borderSide: BorderSide.none,
-                      ),
+                    SizedBox(
+                      height: sh * 0.015,
                     ),
-                    readOnly: true,
-                    onTap: () async {
-                      DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2101),
-                      );
-                      if (pickedDate != null) {
+                    const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Amount', style: TextStyle(fontSize: 16))),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        hintText: 'Enter amount',
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        filled: true,
+                        fillColor: const Color(0xff00AEAD).withOpacity(0.08),
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the amount';
+                        }
+                        try {
+                          amount = double.parse(value);
+                        } catch (e) {
+                          return 'Please enter a valid number';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        amount = double.tryParse(value!);
+                      },
+                    ),
+                    SizedBox(
+                      height: sh * 0.015,
+                    ),
+                    const Align(
+                        alignment: Alignment.centerLeft,
+                        child:
+                            Text('Category', style: TextStyle(fontSize: 16))),
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        hintText: 'Choose Category',
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        filled: true,
+                        fillColor: const Color(0xff00AEAD).withOpacity(0.08),
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      items: categories.map((String category) {
+                        return DropdownMenuItem<String>(
+                          value: category,
+                          child: Text(category),
+                        );
+                      }).toList(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a category';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
                         setState(() {
-                          date = pickedDate;
+                          category = value;
                         });
-                      }
-                    },
-                    validator: (value) {
-                      if (date == null) {
-                        return 'Please select a date';
-                      }
-                      return null;
-                    },
-                    controller: TextEditingController(
-                      text: date != null ? date.toString().split(' ')[0] : '',
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Amount', style: TextStyle(fontSize: 16))),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Enter amount',
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      filled: true,
-                      fillColor: const Color(0xff00AEAD).withOpacity(0.08),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the amount';
-                      }
-                      try {
-                        amount = double.parse(value);
-                      } catch (e) {
-                        return 'Please enter a valid number';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      amount = double.tryParse(value!);
-                    },
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Align(
-                      alignment: Alignment.centerLeft,
-                      child:
-                          Text('Category', style: TextStyle(fontSize: 16))),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      hintText: 'Choose Category',
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      filled: true,
-                      fillColor: const Color(0xff00AEAD).withOpacity(0.08),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    items: categories.map((String category) {
-                      return DropdownMenuItem<String>(
-                        value: category,
-                        child: Text(category),
-                      );
-                    }).toList(),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a category';
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      setState(() {
+                      },
+                      onSaved: (value) {
                         category = value;
-                      });
-                    },
-                    onSaved: (value) {
-                      category = value;
-                    },
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Description (Optional)',
-                          style: TextStyle(fontSize: 16))),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Enter description',
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      filled: true,
-                      fillColor: const Color(0xff00AEAD).withOpacity(0.08),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        borderSide: BorderSide.none,
-                      ),
+                      },
                     ),
-                    maxLines: 3,
-                    onSaved: (value) {
-                      description = value;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                    SizedBox(
+                      height: sh * 0.015,
+                    ),
+                    const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Description (Optional)',
+                            style: TextStyle(fontSize: 16))),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        hintText: 'Enter description',
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        filled: true,
+                        fillColor: const Color(0xff00AEAD).withOpacity(0.08),
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      maxLines: 3,
+                      onSaved: (value) {
+                        description = value;
+                      },
+                    ),
+                    SizedBox(
+                      height: sh * 0.03,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20.0),
+          padding: EdgeInsets.symmetric(vertical: 0, horizontal: sw * 0.05),
           child: SizedBox(
             width: double.infinity,
             child: TextButton(
